@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+*.eggs/
+*.env
+*.venv
+.env
+.venv/
+env/
+venv/
+ENV/
+*.sqlite3
+
+# MySQL (if you accidentally export dumps)
+*.sql
+*.sql.gz
+
+# Django specific
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Compiled
+*.so
+*.dll
+*.dylib
+
+# Migrations (optional — include if you recreate them often)
+**/migrations/*.py
+**/migrations/__pycache__/
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Build artifacts
+build/
+dist/
