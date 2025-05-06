@@ -16,7 +16,7 @@ venv/
 ENV/
 *.sqlite3
 
-# MySQL (if you accidentally export dumps)
+# MySQL 
 *.sql
 *.sql.gz
 
@@ -39,7 +39,7 @@ Thumbs.db
 *.dll
 *.dylib
 
-# Migrations (optional — include if you recreate them often)
+# Migrations
 **/migrations/*.py
 **/migrations/__pycache__/
 

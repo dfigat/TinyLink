@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from django.shortcuts import redirect
+from django.http import JsonResponse
 
 from .models import Link
 from .serializers import *
@@ -39,3 +40,12 @@ def redirect_by_short_code(request, code):
         return redirect(link.long_link)
     except Link.DoesNotExist:
         return Response({'error': 'tinyLink not found :c'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@api_view(['GET'])
+def show_all_records(request):
+    data = Link.objects.all()
+    serializer = TinyUrlSerializer(data, many = True)
+    return Response(
+        serializer.data   
+    )

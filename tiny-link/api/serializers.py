@@ -12,6 +12,7 @@ class TinyUrlSerializer(serializers.ModelSerializer):
     def get_long_link(self, obj):
         return obj.get_long_link()
     
+    
 
 class TinyUrlSerializerCreate(serializers.ModelSerializer):
     class Meta:
