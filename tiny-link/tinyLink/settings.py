@@ -90,16 +90,16 @@ DATABASES = {
     }
 }
 
-DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': env(["DATABASE_NAME"]),
-    #     'USER':  env(["DATABASE_USER"]),
-    #     'HOST': env(["DATABASE_HOST"]),
-    #     'PASSWORD': env(["DATABASE_PASSWORD"]),
-    #     'PORT': env(["DATABASE_PORT"])
-    # }
-}
+# DATABASES = {
+#     # 'default': {
+#     #     'ENGINE': 'django.db.backends.mysql',
+#     #     'NAME': env(["DATABASE_NAME"]),
+#     #     'USER':  env(["DATABASE_USER"]),
+#     #     'HOST': env(["DATABASE_HOST"]),
+#     #     'PASSWORD': env(["DATABASE_PASSWORD"]),
+#     #     'PORT': env(["DATABASE_PORT"])
+#     # }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
