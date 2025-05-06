@@ -11,11 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
-# import environ
-
-# env = environ.Env()
-# environ.Env().read_env()
-
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,24 +79,21 @@ WSGI_APPLICATION = 'tinyLink.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "tinylink", #os.environ["DATABASE_NAME"],
-        'USER':  "tinylink",#os.environ["DATABASE_USER"],
-        'HOST': "127.0.0.1",#"localhost",#os.environ["DATABASE_HOST"],
-        'PASSWORD': "tinylink",#os.environ["DATABASE_PASSWORD"],
-        'PORT': "3306" #os.environ["DATABASE_PORT"]
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST' : os.getenv('DATABASE_HOST'),
+        'PORT' : os.getenv("DATABASE_PORT"),
+        'TEST': {
+            'NAME': os.getenv('TEST_DATABASE_NAME'),
+            'USER': os.getenv('TEST_DATABASE_USER'),
+            'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
+            'HOST' : os.getenv('TEST_DATABASE_HOST'),
+            'PORT' : os.getenv("TEST_DATABASE_PORT")
+        }
     }
 }
 
-# DATABASES = {
-#     # 'default': {
-#     #     'ENGINE': 'django.db.backends.mysql',
-#     #     'NAME': env(["DATABASE_NAME"]),
-#     #     'USER':  env(["DATABASE_USER"]),
-#     #     'HOST': env(["DATABASE_HOST"]),
-#     #     'PASSWORD': env(["DATABASE_PASSWORD"]),
-#     #     'PORT': env(["DATABASE_PORT"])
-#     # }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

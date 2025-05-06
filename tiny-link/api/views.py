@@ -6,6 +6,7 @@ from django.http import JsonResponse
 
 from .models import Link
 from .serializers import *
+from .config import number_of_days, code_length
 
 # Create your views here.
 @api_view(['GET'])
@@ -39,6 +40,7 @@ def redirect_by_short_code(request, code):
         link = Link.objects.get(code=code)
         return redirect(link.long_link)
     except Link.DoesNotExist:
+        
         return Response({'error': 'tinyLink not found :c'}, status=status.HTTP_404_NOT_FOUND)
     
 
@@ -49,3 +51,23 @@ def show_all_records(request):
     return Response(
         serializer.data   
     )
+
+@api_view(['GET'])
+def show_configuration(request):
+    data = {
+        "number_of_days":number_of_days,
+        "code_length":code_length
+        }
+    
+    return Response(
+        data
+    )
+@api_view(['GET'])
+def show_code(request, long_link):
+    try:
+        data = Link.objects.get(long_link=long_link)
+        return Response(
+            data.code
+        )
+    except Link.DoesNotExist:
+        return Response({'error':'tinyLink does not exist :C'}, status=status.HTTP_404_NOT_FOUND)

@@ -9,10 +9,13 @@ __pycache__/
 *.eggs/
 *.env
 *.venv
+*.myvenv
 .env
 .venv/
+.myvenv/
 env/
 venv/
+myvenv/
 ENV/
 *.sqlite3
 
