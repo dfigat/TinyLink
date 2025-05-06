@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
@@ -84,16 +85,18 @@ DATABASES = {
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST' : os.getenv('DATABASE_HOST'),
         'PORT' : os.getenv("DATABASE_PORT"),
+        },
         'TEST': {
+            'ENGINE': 'django.db.backends.mysql',
             'NAME': os.getenv('TEST_DATABASE_NAME'),
             'USER': os.getenv('TEST_DATABASE_USER'),
             'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
             'HOST' : os.getenv('TEST_DATABASE_HOST'),
             'PORT' : os.getenv("TEST_DATABASE_PORT")
         }
-    }
 }
-
+if 'test' in sys.argv:
+    DATABASES['default'] = DATABASES['TEST']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
