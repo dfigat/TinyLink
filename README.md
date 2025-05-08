@@ -1,6 +1,4 @@
 # TinyLink
-
-# TinyLink
 TinyLink is a simple URL shortener service using Django and Django Rest Framework.
 It allows generating short (tiny) links to manage long URLs efficiently
 (in development)
