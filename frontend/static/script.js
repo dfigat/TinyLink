@@ -1,6 +1,7 @@
 const inputField = document.getElementById("linkBox");
 const button = document.getElementById("SubmitButton");
 button.addEventListener("click", () => {
+    inputField.classList.remove("open")
     inputField.classList.add("close");
     setTimeout(() => {
         inputField.classList.remove("close");
