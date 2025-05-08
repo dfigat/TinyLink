@@ -69,4 +69,4 @@ It allows generating short (tiny) links to manage long URLs efficiently
 ```
 (for now days are fixed at 30 and providing argument won't affect it)
 ## A quick demo
-![Demo](./assets/demo.gif)
+![DEMO](.assets/demo.gif)
