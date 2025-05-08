@@ -100,3 +100,10 @@ def delete_all_by_threshold(request, threshold=THRESHOLD):
     count = expired.count()
     expired.delete()
     return Response({"deleted_count": count}, status.HTTP_200_OK)
+
+
+# Temporary
+from django.shortcuts import render
+
+def serve_index(request):
+    return render(request, 'index.html')

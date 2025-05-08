@@ -17,8 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from api.views import serve_index
+
 urlpatterns = [
     path('admin/', admin.site.urls), # -< by default
     # our stuff here
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
+    path('', serve_index)
 ]

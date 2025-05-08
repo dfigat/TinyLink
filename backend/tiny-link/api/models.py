@@ -19,6 +19,7 @@ def get_code(code_length=code_length):
 
 class Link(models.Model):
     long_link = models.URLField(max_length=255,unique=True)
+    # long_link = models.CharField(max_length=255,unique=True)
     code = models.CharField(max_length=code_length,unique=True,default=get_code)
     lastUsed = models.DateTimeField(auto_now=True)
     
