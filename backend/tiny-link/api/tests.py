@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Link
 from .config import *
+import datetime
 
 class TestLinkModel(TestCase):
     def setUp(self):
@@ -28,11 +29,12 @@ class TestAPIGETRequests(TestCase):
         self.client = APIClient()
         self.link = Link.objects.create(
         long_link="https://www.example.com",
-        code = "Ex4m"
+        code = "Ex4m",
+        lastUsed = datetime.datetime(2025,4,9,7,13,32,358992,tzinfo=datetime.timezone.utc)
         )
         Link.objects.create(
             long_link="https://www.example2.com",
-        code = "Ex4w"
+            code = "Ex4w"
         )
     
     def test_api_default_response(self):
@@ -48,8 +50,6 @@ class TestAPIGETRequests(TestCase):
         response = self.client.get(f'/api/v1.0/short/Ex4m', follow=False)
         self.assertEqual(response.status_code, 301)# 301 is code for redirect
         
-        
-
     def test_api_returns_all_records(self):
         response = self.client.get(f'/api/v1.0/all')
         data = list(Link.objects.all().values())
@@ -69,3 +69,30 @@ class TestAPIGETRequests(TestCase):
     #     response = self.client.get(f'/api/v1.0/code/https://www.example.com')
     #     self.assertIn("Ex4m",response,f"API did not return expected long link from given code")
     
+class TestAPIDELETERequests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.link = Link.objects.create(
+        long_link="https://www.example.com",
+        code = "Ex4m",
+        lastUsed = datetime.datetime(2025,4,9,7,13,32,358992,tzinfo=datetime.timezone.utc)
+        )
+        Link.objects.create(
+            long_link="https://www.example2.com",
+            code = "Ex4w"
+        )
+        
+    def test_api_delete_all_by_treshold(self):
+        preDelete = Link.objects.all()
+        response = self.client.delete(f"/api/v1.0/short/delete_old")
+        postDelete = Link.objects.all()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(preDelete,postDelete)
+
+class TestAPIPOSTRequest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        Link.objects.create(
+           long_link="https://www.example.com",
+            code = "Ex4m" 
+        )
