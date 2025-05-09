@@ -29,7 +29,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'link.cbpio.pl'
+    'link.cbpio.pl',
+    'https://link.cbpio.pl',
 ]
 
 
@@ -44,9 +45,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'django_extensions',
+    'corsheaders'
 ]
 
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +66,27 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tinyLink.urls'
+
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_ALLOW_ALL = True 
+  
+CORS_ALLOWED_ORIGINS = [
+    "https://link.cbpio.pl"
+]
+
+# Not sure if needed, just in case
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "DELETE"
+]
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "x-csrftoken",
+    "x-requested-with",
+]
 
 TEMPLATES = [
     {

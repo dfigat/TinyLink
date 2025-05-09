@@ -15,14 +15,14 @@ from .config import number_of_days, code_length, THRESHOLD
 @api_view(['GET'])
 def api_default(request):
     return Response([
-        "http://link.cbpio.pl:8080/api/v1.0/"
+        "https://link.cbpio.pl:8080/api/v1.0/"
     ])
 
 @api_view(['GET'])
 def api_v1_0(request):
     return Response([
-      "http://link.cbpio.pl:8080/api/v1.0/short",
-      "http://link.cbpio.pl:8080/api/v1.0/test"
+      "https://link.cbpio.pl:8080/api/v1.0/short",
+      "https://link.cbpio.pl:8080/api/v1.0/test"
     ])
 
 @api_view(['POST'])
@@ -34,7 +34,7 @@ def create_tiny_link(request):
     if already_created:
         output_data = TinyUrlSerializer(already_created).data
         output_data = output_data.copy()
-        output_data['code'] = "http://link.cbpio.pl:8080/api/v1.0/short/" + output_data['code']
+        output_data['code'] = "https://link.cbpio.pl:8080/api/v1.0/short/" + output_data['code']
         return Response(output_data, status.HTTP_200_OK)
 
     if not serializer_tiny.is_valid():
