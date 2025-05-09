@@ -6,9 +6,6 @@ button.addEventListener("click", () => {
     setTimeout(() => {
         inputField.classList.remove("close");
         inputField.classList.add("open");
-<<<<<<< HEAD
         inputField.value = "TINY LINK HERE";
-=======
->>>>>>> 442465a (Few Fixes)
     }, 400); 
 });
