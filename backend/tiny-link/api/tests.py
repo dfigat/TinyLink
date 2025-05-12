@@ -103,7 +103,7 @@ class TestAPIPOSTRequest(TestCase):
         data = {'long_link':"https://www.example3.com"}
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn("http://link.cbpio.pl:8080/api/v1.0/short/",response.data["code"])
+        self.assertIn("https://link.cbpio.pl:8080/api/v1.0/short/",response.data["code"])
     """ Testuje czy zwracany jest już istniejący link gdy tworzony jest juz w bazie"""
     def test_api_return_existing_link(self):
         data = {'long_link': "https://www.example.com"}
