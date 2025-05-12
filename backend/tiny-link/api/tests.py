@@ -71,6 +71,10 @@ class TestAPIGETRequests(TestCase):
                 }
         self.assertEqual(data, response.data, f"Did not recive expected values from configuration file")
 
+    def test_api_shows_code(self):
+        response = self.client.get(f"/api/v{API_VERSION}/code/{self.link.long_link}",follow=True)
+        self.assertEqual(response.data, self.link.code)
+
 class TestAPIDELETERequests(TestCase):
     def setUp(self):
         self.client = APIClient()
