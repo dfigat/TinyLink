@@ -59,6 +59,10 @@ footer{
     transition: transform 0.4s, width 2s;
     display: inline-block;
 }
+#urlError{
+    color: red;
+    
+}
 .close
 {
     transform: scale(0);
