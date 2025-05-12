@@ -12,7 +12,11 @@ It allows generating short (tiny) links to manage long URLs efficiently
 
 - MySQL
 
-
+## Installation
+(make sure pip is installed before running the script)
+'''
+source ./setup.sh
+'''
 
 
 ## Features

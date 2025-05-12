@@ -26,11 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    'link.cbpio.pl',
-    'https://link.cbpio.pl',
+    os.getenv('ALLOWED_HOST'),
+    os.getenv('ALLOWED_DOMAIN'),
 ]
 
 
@@ -71,7 +71,7 @@ CORS_ALLOW_CREDENTIALS = True
 # CORS_ORIGIN_ALLOW_ALL = True 
   
 CORS_ALLOWED_ORIGINS = [
-    "https://link.cbpio.pl"
+    os.getenv('ALLOWED_HOST')
 ]
 
 # Not sure if needed, just in case
@@ -119,14 +119,14 @@ DATABASES = {
         'HOST' : os.getenv('DATABASE_HOST'),
         'PORT' : os.getenv("DATABASE_PORT"),
         },
-        'TEST': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('TEST_DATABASE_NAME'),
-            'USER': os.getenv('TEST_DATABASE_USER'),
-            'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
-            'HOST' : os.getenv('TEST_DATABASE_HOST'),
-            'PORT' : os.getenv("TEST_DATABASE_PORT")
-        }
+    'TEST': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('TEST_DATABASE_NAME'),
+        'USER': os.getenv('TEST_DATABASE_USER'),
+        'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
+        'HOST' : os.getenv('TEST_DATABASE_HOST'),
+        'PORT' : os.getenv("TEST_DATABASE_PORT")
+    }
 }
 if 'test' in sys.argv:
     DATABASES['default'] = DATABASES['TEST']
@@ -157,10 +157,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Warsaw'
 USE_TZ = True
-
 USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

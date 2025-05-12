@@ -43,7 +43,7 @@ def create_tiny_link(request):
     link_tiny = serializer_tiny.save()
     final_serializer = TinyUrlSerializer(link_tiny)
     output_data = final_serializer.data.copy()
-    output_data['code'] = "http://link.cbpio.pl:8080/api/v1.0/short/" + output_data['code']
+    output_data['code'] = "https://link.cbpio.pl:8080/api/v1.0/short/" + output_data['code']
     return Response(output_data, status.HTTP_201_CREATED)
 
 @api_view(['GET'])

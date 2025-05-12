@@ -1,11 +1,24 @@
-const inputField = document.getElementById("linkBox");
+const linkBox = document.getElementById("linkBox");
 const button = document.getElementById("SubmitButton");
-button.addEventListener("click", () => {
-    inputField.classList.remove("open")
-    inputField.classList.add("close");
+
+const playAnimation = () => {
+    linkBox.classList.remove("open")
+    linkBox.classList.add("close");
     setTimeout(() => {
-        inputField.classList.remove("close");
-        inputField.classList.add("open");
-        inputField.value = "TINY LINK HERE";
-    }, 400); 
-});
+        linkBox.classList.remove("close");
+        linkBox.classList.add("open");
+        // linkBox.value = "TINY LINK HERE";
+    }, 400);
+};
+
+button.addEventListener("click", playAnimation)
+
+// const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
+
+linkBox.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault()
+        playAnimation()
+    }
+})
+
