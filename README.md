@@ -72,3 +72,22 @@ source ./setup.sh
 (for now days are fixed at 30 and providing argument won't affect it)
 ## A quick demo
 ![DEMO](.assets/demo.gif)
+
+## Testing
+- to run tests use
+```
+python manage.py test
+```
+- to run with code coverage use
+```
+coverage run --source='.' manage.py test
+```
+#### To see the results of code coverage use any of the following
+- to see results in terminal
+```
+coverage report
+```
+- to see results in html
+```
+coverage html
+```
