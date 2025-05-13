@@ -11,6 +11,8 @@ from .models import Link
 from .serializers import *
 from .config import number_of_days, code_length, THRESHOLD
 
+from django_ratelimit.decorators import ratelimit
+
 # Create your views here.
 @api_view(['GET'])
 def api_default(request):
@@ -25,7 +27,9 @@ def api_v1_0(request):
       "https://link.cbpio.pl:8080/api/v1.0/test"
     ])
 
+
 @api_view(['POST'])
+# @ratelimit(key='ip', rate='60/h')
 def create_tiny_link(request):
     data = request.data
     serializer_tiny = TinyUrlSerializerCreate(data=data)
@@ -34,7 +38,7 @@ def create_tiny_link(request):
     if already_created:
         output_data = TinyUrlSerializer(already_created).data
         output_data = output_data.copy()
-        output_data['code'] = "https://link.cbpio.pl:8080/api/v1.0/short/" + output_data['code']
+        output_data['code'] = "https://link.cbpio.pl:8080/" + output_data['code']
         return Response(output_data, status.HTTP_200_OK)
 
     if not serializer_tiny.is_valid():
@@ -43,7 +47,7 @@ def create_tiny_link(request):
     link_tiny = serializer_tiny.save()
     final_serializer = TinyUrlSerializer(link_tiny)
     output_data = final_serializer.data.copy()
-    output_data['code'] = "https://link.cbpio.pl:8080/api/v1.0/short/" + output_data['code']
+    output_data['code'] = "https://link.cbpio.pl:8080/" + output_data['code']
     return Response(output_data, status.HTTP_201_CREATED)
 
 @api_view(['GET'])
@@ -99,6 +103,13 @@ def delete_all_by_threshold(request, threshold=THRESHOLD):
     expired = Link.objects.filter(lastUsed__lt=expiration_time)
     count = expired.count()
     expired.delete()
+    return Response({"deleted_count": count}, status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+def delete_by_code(request, code):
+    to_delete = Link.objects.filter(code=code)
+    count = to_delete.count()
+    to_delete.delete()
     return Response({"deleted_count": count}, status.HTTP_200_OK)
 
 

@@ -3,8 +3,8 @@
 function display_help() {
   echo "Usage: ./setup.sh <venv_name> [options]"
   echo "Options:"
-  echo "  --help         Display this message"
-  echo "  --d <dir>      Specify the directory to setup venv in"
+  echo "  --help     - Display this message"
+  echo "  --d <dir>  - Specify the directory to setup venv in"
 }
 
 dir="."
@@ -34,7 +34,7 @@ if [[ $# -gt 0 ]]; then
   done
 fi
 
-echo "Creating virtual environment: $name in $dir"
+echo "Creating virtual environment called $name in $dir"
 python3 -m venv "$dir/$name"
 
 echo "Activating virtual environment"
