@@ -22,6 +22,9 @@ async function createTinyLink() {
         else if (response.ok){
             showError(data.code)
         }
+        else if(!response.ok){
+            showError("Server is down")
+        }
 
     } catch (error) {
         console.error(error)
