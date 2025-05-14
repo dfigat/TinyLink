@@ -7,7 +7,7 @@ from .config import *
 from dotenv import load_dotenv
 import os
 import datetime
-load_dotenv()
+load_dotenv('../db/.env')
 URL = os.getenv('API_URL')
 URL_SHORT = os.getenv('API_URL_SHORTENED')
 
