@@ -4,7 +4,12 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Link
 from .config import *
+from dotenv import load_dotenv
+import os
 import datetime
+load_dotenv()
+URL = os.getenv('API_URL')
+URL_SHORT = os.getenv('API_URL_SHORTENED')
 
 class TestLinkModel(TestCase):
     def setUp(self):
@@ -40,14 +45,14 @@ class TestAPIGETRequests(TestCase):
         )
     """ Testuje czy odpowiedź servera na zapytanie działa"""
     def test_api_default_response(self):
-        response = self.client.get(f'https://link.cbpio.pl/api/')
-        self.assertIn(f"https://link.cbpio.pl:8080/api/v{API_VERSION}/", response.json(), "Default connection does not contain expected data")
-        
+        response = self.client.get(f'/api/', follow=False)
+        self.assertTrue(response.data[0].startswith(f"{URL}v{API_VERSION}/"))
+
     """ Testuje czy server poprawnie odpowiada na zapytanie"""
     def test_api_version_links(self):
-        response = self.client.get(f'/api/v{API_VERSION}/')
-        self.assertIn(f"https://link.cbpio.pl:8080/api/v{API_VERSION}/short",response.data, f"Expected http://link.cbpio.pl:8080/api/v{API_VERSION}/short to be in response, expected not in response data")
-        self.assertIn(f"https://link.cbpio.pl:8080/api/v{API_VERSION}/test",response.data, f"Expected http://link.cbpio.pl:8080/api/v{API_VERSION}/test to be in response, expected not in response data")
+        response = self.client.get(f'/api/v{API_VERSION}', follow=True)
+        self.assertIn(f"{URL}v{API_VERSION}/short",response.content.decode('utf-8'))#, f"Expected http://link.cbpio.pl:8080/api/v{API_VERSION}/short to be in response, expected not in response data")
+        self.assertIn(f"{URL}v{API_VERSION}/test",response.content.decode('utf-8'))#, f"Expected http://link.cbpio.pl:8080/api/v{API_VERSION}/test to be in response, expected not in response data")
     
     """ Testuje czy server poprawnie przekierowuje użytkownika po podaniu kodu"""
     def test_api_redirect_by_short_code(self):
@@ -56,7 +61,7 @@ class TestAPIGETRequests(TestCase):
 
     """ Testuje czy server poprawnie zwraca wszystkie linki i ich kody z bazy danych"""    
     def test_api_returns_all_records(self):
-        response = self.client.get(f'https://link.cbpio.pl/api/v{API_VERSION}/all')
+        response = self.client.get(f'{URL}v{API_VERSION}/all')
         data = list(Link.objects.all().values())
         expectedPairs = [(item['long_link'], item['code'])for item in data]
         recivedPairs =  [(item['long_link'], item['code'])for item in response.json()]
@@ -101,13 +106,13 @@ class TestAPIPOSTRequest(TestCase):
            long_link="https://www.example.com",
             code = "Ex4m" 
         )
-        self.url = f"https://link.cbpio.pl/api/v{API_VERSION}/short/"
+        self.url = f"{URL}v{API_VERSION}/short/"
     """ Testuje czy poprawnie jest tworzony link przez zapytanie """
     def test_api_create_new_link(self):
         data = {'long_link':"https://www.example3.com"}
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn(f"https://link.cbpio.pl:8080/api/v{API_VERSION}/short/",response.data["code"])
+        self.assertIn(f"{URL_SHORT}",response.data["code"])
     """ Testuje czy zwracany jest już istniejący link gdy tworzony jest juz w bazie"""
     def test_api_return_existing_link(self):
         data = {'long_link': "https://www.example.com"}
