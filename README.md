@@ -91,3 +91,13 @@ coverage report
 ```
 coverage html
 ```
+
+# Setup Guide
+
+## Generating SSL certificates
+- using console navigate to Backend and use
+[replace yourdomain.com with actual domain]
+[replace /path/to/certs with path to actual certs]
+```
+./issue-certificate.sh -d yourdomain.com -o /path/to/certs
+```
