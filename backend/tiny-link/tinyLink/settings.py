@@ -91,7 +91,8 @@ CORS_ALLOW_HEADERS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '../../frontend')], # for now
+        # 'DIRS': [os.path.join(BASE_DIR, '../../frontend')], # for now
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -165,9 +166,9 @@ USE_I18N = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / '../../frontend/static'
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / '../../frontend/static'
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

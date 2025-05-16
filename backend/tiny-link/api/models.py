@@ -4,13 +4,12 @@ from string import ascii_letters, digits
 
 from .config import number_of_days, code_length
 # Create your models here
-# number_of_days jest zmienną przetrzymującą informację ile dni musi minąć bez uzywania linku by tten został usunięty z bazy
 
 def get_code(code_length=code_length):
     def generate_code(code_length):
         return ''.join(choices(ascii_letters + digits, k=code_length))
     
-    # Make sure there are no duplicates
+    # Make sure there are no duplicates (may change )
     code =  generate_code(code_length)
     while Link.objects.filter(code = code):
         code = generate_code(code_length)
@@ -25,3 +24,17 @@ class Link(models.Model):
     
     def get_long_link(self):
         return self.long_link
+
+class APIKey(models.Model):
+    id = models.AutoField(primary_key=True)
+    key = models.CharField(max_length=69, unique=True)
+    name = models.CharField(max_length=69)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        db_table = 'api_apikey'
+    

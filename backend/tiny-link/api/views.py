@@ -3,34 +3,45 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.shortcuts import redirect
 from django.db.utils import IntegrityError
+from dotenv import load_dotenv
+from os import getenv
 
 from django.utils.timezone import now
 from datetime import timedelta
 
 from .models import Link
 from .serializers import *
-from .config import number_of_days, code_length, THRESHOLD
+from .config import number_of_days, code_length, THRESHOLD, API_VERSION
+from .utils import validate_api_key
 
 from django_ratelimit.decorators import ratelimit
+
+load_dotenv('../tinyLink/.env')
+API_URL = getenv('API_URL')
+API_URL_SHORTENED = getenv('API_URL_SHORTENED')
 
 # Create your views here.
 @api_view(['GET'])
 def api_default(request):
     return Response([
-        "https://link.cbpio.pl:8080/api/v1.0/"
+        f"{API_URL}/{API_VERSION}"
     ])
 
 @api_view(['GET'])
 def api_v1_0(request):
     return Response([
-      "https://link.cbpio.pl:8080/api/v1.0/short",
-      "https://link.cbpio.pl:8080/api/v1.0/test"
+      f"{API_URL}/{API_VERSION}/short"
+      f"{API_URL}/{API_VERSION}/test"
     ])
 
 
 @api_view(['POST'])
 # @ratelimit(key='ip', rate='60/h')
 def create_tiny_link(request):
+    is_valid, error = validate_api_key(request)
+    if not is_valid:
+        return error
+    
     data = request.data
     serializer_tiny = TinyUrlSerializerCreate(data=data)
 
@@ -38,7 +49,7 @@ def create_tiny_link(request):
     if already_created:
         output_data = TinyUrlSerializer(already_created).data
         output_data = output_data.copy()
-        output_data['code'] = "https://link.cbpio.pl:8080/" + output_data['code']
+        output_data['code'] = API_URL_SHORTENED + output_data['code']
         return Response(output_data, status.HTTP_200_OK)
 
     if not serializer_tiny.is_valid():
@@ -47,7 +58,7 @@ def create_tiny_link(request):
     link_tiny = serializer_tiny.save()
     final_serializer = TinyUrlSerializer(link_tiny)
     output_data = final_serializer.data.copy()
-    output_data['code'] = "https://link.cbpio.pl:8080/" + output_data['code']
+    output_data['code'] = API_URL_SHORTENED + output_data['code']
     return Response(output_data, status.HTTP_201_CREATED)
 
 @api_view(['GET'])
@@ -69,6 +80,11 @@ def show_all_records(request):
     return Response(
         serializer.data   
     )
+
+@api_view(['GET'])
+def count_all_records(request):
+    count = Link.objects.all().count()
+    return Response({"count": count}, status.HTTP_200_OK)
 
 @api_view(['GET'])
 def show_configuration(request):
@@ -111,6 +127,10 @@ def delete_by_code(request, code):
     count = to_delete.count()
     to_delete.delete()
     return Response({"deleted_count": count}, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def is_alive(request):
+    return Response({"status": "alive"}, status.HTTP_200_OK)
 
 
 # Temporary
