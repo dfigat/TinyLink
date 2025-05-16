@@ -5,7 +5,7 @@ import json
 
 COMMANDS = ['help', 'config']
 
-# Kinda useless at the end of the day
+# Kinda useless at the end of the day, unless not
 def get_filename(dir = __file__):
     file_path = str(dir).split('.')
     if file_path[-1] == 'py':
@@ -31,11 +31,12 @@ class API_Manager:
     def display_help(self):
         print(f'Usage: {filename} [command]')
         print('Commands:')
-        print(' help        - Displays this message')
-        print(' config      - Shows server configuration')
-        print(' code <link> - Returns shortened url')
-        print(' all         - Prints all')
-        print(' delete_old  - Delete old (expired) entries')
+        print(' help                  - Displays this message')
+        print(' config                - Shows server configuration')
+        print(' code <link> <API_KEY> - Returns shortened url')
+        print(' all                   - Prints all')
+        print(' get_all_count         - Gets count of all entries')
+        print(' delete_old            - Delete old (expired) entries')
     
     def display_more_info_msg(self):
         print(f'Type `{filename} help` for more information')
@@ -44,19 +45,26 @@ class API_Manager:
         res = requests.get(f'{self.api_url}{self.api_version}/config')
         return res
 
-    def create_short_link(self, long_url):
+    def create_short_link(self, long_url, api_key):
         body = {'long_link': long_url}
-        res = requests.post(f'{self.api_url}{self.api_version}/short', json=body)
-        print(f'{self.api_url}{self.api_version}/short/')
+        headers = {'X-API-KEY': api_key}
+        res = requests.post(f'{self.api_url}{self.api_version}/short/', json=body, headers=headers)
         return res
     
     def get_all_entries(self):
         res = requests.get(f'{self.api_url}{self.api_version}/all')
         return res
     
+    def get_all_entries_count(self):
+        res = requests.get(f'{self.api_url}{self.api_version}/get_count_all')
+        return res
+    
     def delete_old_entries(self):
         res = requests.delete(f'{self.api_url}{self.api_version}/short/delete_old')
-        print(f'{self.api_url}{self.api_version}/short/delete_old')
+        return res
+    
+    def is_alive(self, timeout=3):
+        res = requests.get(f'{self.api_url}{self.api_version}/is_alive', timeout=timeout)
         return res
     
     def print_data(self, res, property=''):
@@ -72,7 +80,7 @@ class API_Manager:
 
     def check_connection(self):
         try:
-            requests.get(f'{self.api_url}{self.api_version}/config', timeout=3)
+            self.is_alive(timeout=3)
             return True
         except requests.ConnectionError:
             return False
@@ -101,17 +109,18 @@ if command == 'help':
 elif command == 'config':
     api_m.print_data(api_m.get_config())
 elif command == 'code':
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         api_m.display_error('Inadequate argument count')
         api_m.display_more_info_msg()
         sys.exit(1)
-    api_m.print_data(api_m.create_short_link(sys.argv[2]), property='code')
+    api_m.print_data(api_m.create_short_link(sys.argv[2], sys.argv[3]), property='code')
 elif command == 'all':
     api_m.print_data(api_m.get_all_entries())
 elif command == 'delete_old':
     api_m.print_data(api_m.delete_old_entries())
-    
-    
+elif command == 'get_all_count':
+    api_m.print_data(api_m.get_all_entries_count(), property='count')
+
 else:
     api_m.display_error('Unknown command: ' + command)
     api_m.display_more_info_msg()

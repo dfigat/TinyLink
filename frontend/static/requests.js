@@ -1,3 +1,13 @@
+
+async function isAlive() {
+    try {
+        const response = await fetch('https://link.cbpio.pl:8080/api/v1.0/is_alive');
+        return response.ok;
+    } catch (error) {
+        return false;
+    }
+}
+
 async function createTinyLink() {
     const longLink = document.querySelector('#linkBox').value
     const outputContainer = document.querySelector('#linkBox')
@@ -20,7 +30,8 @@ async function createTinyLink() {
             showError('There is an issue with the provided link')
 }   
         else if (response.ok){
-            showError(data.code)
+            showError(data.code) // ??
+            outputContainer.value = data.code
         }
         else if(!response.ok){
             showError("Server is down")
@@ -28,7 +39,12 @@ async function createTinyLink() {
 
     } catch (error) {
         console.error(error)
-        showError('An error has occured while creating tiny link: ' + error)
+
+        const alive = await isAlive()
+        if (!alive)
+            showError('Server is down')
+        else
+            showError('An error has occured while creating tiny link: ' + error)
     }
 }
 
