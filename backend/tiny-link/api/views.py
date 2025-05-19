@@ -1,6 +1,9 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from django.shortcuts import redirect
 from django.db.utils import IntegrityError
 from dotenv import load_dotenv
@@ -38,10 +41,11 @@ def api_v1_0(request):
 
 @api_view(['POST'])
 # @ratelimit(key='ip', rate='1/m')
+@permission_classes([IsAuthenticated])
 def create_tiny_link(request):
-    if request.data.get('x-api-link') == WEB_KEY:
-        if is_ratelimited(request, group='create_tiny_link', key='ip', rate='1/s', method='POST', increment=True):
-            return Response({'error': 'Rate limit exceeded'}, status.HTTP_429_TOO_MANY_REQUESTS)
+    # if request.data.get('x-api-link') == WEB_KEY:
+    #     if is_ratelimited(request, group='create_tiny_link', key='ip', rate='1/s', method='POST', increment=True):
+    #         return Response({'error': 'Rate limit exceeded'}, status.HTTP_429_TOO_MANY_REQUESTS)
     
     is_valid, error = validate_api_key(request)
     if not is_valid:
@@ -82,9 +86,7 @@ def redirect_by_short_code(request, code):
 def show_all_records(request):
     data = Link.objects.all()
     serializer = TinyUrlSerializer(data, many = True)
-    return Response(
-        serializer.data   
-    )
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def count_all_records(request):
@@ -96,7 +98,7 @@ def show_configuration(request):
     data = {
         "number_of_days":number_of_days,
         "code_length":code_length
-        }
+    }
     
     return Response(data)
 
@@ -142,3 +144,10 @@ from django.shortcuts import render
 
 def serve_index(request):
     return render(request, 'index.html')
+
+# Regarding jwt token
+@api_view(['POST'])
+@permission_classes([])
+def get_tokens(request):
+    view = TokenObtainPairView.as_view()
+    return view(request._request)

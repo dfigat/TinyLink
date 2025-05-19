@@ -13,5 +13,6 @@ urlpatterns = [
     path('v1.0/code/<path:long_link>/', views.show_code),
     path('v1.0/short/delete_old', views.delete_all_by_threshold),
     path('v1.0/short/delete_by_code/<str:code>/', views.delete_by_code),
-    path('v1.0/is_alive', views.is_alive)
+    path('v1.0/is_alive', views.is_alive),
+    path('v1.0/get_tokens', views.get_tokens)
 ]
