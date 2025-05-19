@@ -3,6 +3,7 @@ Django==4.2.21
 django-cors-headers==4.7.0
 django-extensions==4.1
 djangorestframework==3.16.0
+djangorestframework-simplejwt
 dotenv==0.9.9
 mysqlclient==2.2.7
 pyOpenSSL==25.0.0
