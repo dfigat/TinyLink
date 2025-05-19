@@ -15,10 +15,12 @@ from .config import number_of_days, code_length, THRESHOLD, API_VERSION
 from .utils import validate_api_key
 
 from django_ratelimit.decorators import ratelimit
+from django_ratelimit.core import is_ratelimited
 
 load_dotenv('../tinyLink/.env')
 API_URL = getenv('API_URL')
 API_URL_SHORTENED = getenv('API_URL_SHORTENED')
+WEB_KEY = getenv('WEB_KEY')
 
 # Create your views here.
 @api_view(['GET'])
@@ -34,10 +36,13 @@ def api_v1_0(request):
       f"{API_URL}/{API_VERSION}/test"
     ])
 
-
 @api_view(['POST'])
-# @ratelimit(key='ip', rate='60/h')
+# @ratelimit(key='ip', rate='1/m')
 def create_tiny_link(request):
+    if request.data.get('x-api-link') == WEB_KEY:
+        if is_ratelimited(request, group='create_tiny_link', key='ip', rate='1/s', method='POST', increment=True):
+            return Response({'error': 'Rate limit exceeded'}, status.HTTP_429_TOO_MANY_REQUESTS)
+    
     is_valid, error = validate_api_key(request)
     if not is_valid:
         return error
@@ -93,9 +98,8 @@ def show_configuration(request):
         "code_length":code_length
         }
     
-    return Response(
-        data
-    )
+    return Response(data)
+
 @api_view(['GET'])
 def show_code(request, long_link):
     try:

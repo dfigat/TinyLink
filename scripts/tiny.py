@@ -3,7 +3,13 @@ import requests
 import sys
 import json
 
-COMMANDS = ['help', 'config']
+# from dotenv import load_dotenv
+# from os import getenv
+
+# load_dotenv('../db/.env')
+# API_URL = getenv('API_URL')
+# print(API_URL)
+COMMANDS = ['help', 'config', 'code', 'all', 'get_all_count', 'delete_old']
 
 # Kinda useless at the end of the day, unless not
 def get_filename(dir = __file__):

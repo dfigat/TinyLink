@@ -86,6 +86,7 @@ CORS_ALLOW_HEADERS = [
     "authorization",
     "x-csrftoken",
     "x-requested-with",
+    "x-api-key"
 ]
 
 TEMPLATES = [

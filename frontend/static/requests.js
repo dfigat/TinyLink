@@ -28,9 +28,12 @@ async function createTinyLink() {
 
         if (response.status == 400){
             showError('There is an issue with the provided link')
-}   
+        }
+        else if (response.status == 429)
+            showError('Too many requests')       
+
         else if (response.ok){
-            showError(data.code) // ??
+            // showError(data.code) // ??
             outputContainer.value = data.code
         }
         else if(!response.ok){
