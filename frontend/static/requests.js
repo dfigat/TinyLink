@@ -1,7 +1,7 @@
-
+domain = 'https://link.cbpio.pl:8080'
 async function isAlive() {
     try {
-        const response = await fetch('https://link.cbpio.pl:8080/api/v1.0/is_alive');
+        const response = await fetch(`${domain}/api/v1.0/is_alive`);
         return response.ok;
     } catch (error) {
         return false;
@@ -16,7 +16,7 @@ async function createTinyLink() {
             showError("Invalid link format: should be like: https://example.com")
         }
         showError()
-        const response = await fetch('https://link.cbpio.pl:8080/api/v1.0/short/', {
+        const response = await fetch('${domain}/api/v1.0/short/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
