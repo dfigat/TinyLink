@@ -15,6 +15,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv('../db/.env')
 
+from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -45,13 +47,28 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'django_extensions',
     'corsheaders'
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    'AUTH_HEADER_TYPES': ('Bearer', 'Token'),
+}
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True;
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 MIDDLEWARE = [
@@ -86,7 +103,7 @@ CORS_ALLOW_HEADERS = [
     "authorization",
     "x-csrftoken",
     "x-requested-with",
-    "x-api-key"
+    "x-api-key",
 ]
 
 TEMPLATES = [

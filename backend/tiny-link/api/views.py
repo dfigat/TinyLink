@@ -44,12 +44,16 @@ def api_v1_0(request):
 @permission_classes([IsAuthenticated])
 def create_tiny_link(request):
     # if request.data.get('x-api-link') == WEB_KEY:
-    #     if is_ratelimited(request, group='create_tiny_link', key='ip', rate='1/s', method='POST', increment=True):
-    #         return Response({'error': 'Rate limit exceeded'}, status.HTTP_429_TOO_MANY_REQUESTS)
+        # if is_ratelimited(request, group='create_tiny_link', key='ip', rate='1/s', method='POST', increment=True):
+            # return Response({'error': 'Rate limit exceeded'}, status.HTTP_429_TOO_MANY_REQUESTS)
     
-    is_valid, error = validate_api_key(request)
-    if not is_valid:
-        return error
+    # is_valid, error = validate_api_key(request)
+    # if not is_valid:
+    #     return error
+    
+    if request.user.username == 'demouser':
+        if is_ratelimited(request, group='create_tiny_link', key='ip', rate='5/m', method='POST', increment=True):
+            return Response({'error': 'Rate limit exceeded'}, status.HTTP_429_TOO_MANY_REQUESTS)
     
     data = request.data
     serializer_tiny = TinyUrlSerializerCreate(data=data)
@@ -150,4 +154,10 @@ def serve_index(request):
 @permission_classes([])
 def get_tokens(request):
     view = TokenObtainPairView.as_view()
+    return view(request._request)
+
+@api_view(['POST'])
+@permission_classes([])
+def refresh_token(request):
+    view = TokenRefreshView.as_view()
     return view(request._request)

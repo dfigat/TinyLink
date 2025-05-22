@@ -70,13 +70,13 @@ class API_Manager:
     def create_short_link(self, long_url):
         body = {'long_link': long_url}
         headers = {'Authorization': f'Bearer {self.access_token}'}
-        res = requests.post(f'{self.api_url}{self.api_version}/short', json=body, headers=headers)
+        res = requests.post(f'{self.api_url}{self.api_version}/short/', json=body, headers=headers)
         return res
     
     def get_all_entries(self):
         res = requests.get(f'{self.api_url}{self.api_version}/all')
         return res
-    
+
     def get_all_entries_count(self):
         res = requests.get(f'{self.api_url}{self.api_version}/get_count_all')
         return res
@@ -109,7 +109,13 @@ class API_Manager:
         except requests.Timeout:
             return False
 
+
     # User methods
+    def check_tokens(self):
+        if not self.access_token or not self.refresh_token:
+            self.display_error('No tokens found.\nMake sure you are logged in')
+            return
+        
     def load_tokens(self):
         if path.exists(self.token_file):
             with open(self.token_file, 'r') as token_file:
@@ -120,18 +126,29 @@ class API_Manager:
             self.display_error('Couldn\'t find tokens.\nRunning as guest')
     
     def save_tokens(self):
-        if not self.access_token or not self.refresh_token:
-            self.display_error('No tokens to save.\nMake sure you are logged in')
-            return
-            
+        self.check_tokens()
+        
         with open(self.token_file, 'w') as token_file:
             json.dump({
                 "refresh": self.refresh_token,
                 "access": self.access_token
             }, token_file)
     
+    def refresh_refresh_token(self):
+        self.check_tokens()
+        
+        res = requests.post(f'{self.api_url}{self.api_version}/refresh_token/',
+                            json={'refresh': self.refresh_token})
+        if res.status_code == 200:
+            d = res.json()
+            self.access_token = d['access']
+            print('Refresh of access_token successful')
+        else:
+            self.display_error('Failed at refreshing access token. Make sure you are logged in')
+            print(res.json()['detail'])
+    
     def login(self, username, password):
-        res = requests.post(f'{self.api_url}{self.api_version}/get_tokens',
+        res = requests.post(f'{self.api_url}{self.api_version}/get_tokens/',
                             json={'username': username, 'password': password})
         
         if res.status_code == 200:
@@ -170,6 +187,8 @@ elif command == 'code':
         api_m.display_error('Inadequate argument count')
         api_m.display_more_info_msg()
         sys.exit(1)
+    api_m.refresh_refresh_token()
+    api_m.save_tokens()
     api_m.print_data(api_m.create_short_link(sys.argv[2]), property='code')
 elif command == 'all':
     api_m.print_data(api_m.get_all_entries())
