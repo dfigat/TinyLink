@@ -7,7 +7,7 @@ function display_help() {
   echo "  --d <dir>  - Specify the directory to setup venv in"
 }
 
-dir="."
+dir="/app/tiny-link"
 name="venv"
 
 if [[ $# -gt 0 ]]; then
@@ -35,14 +35,19 @@ if [[ $# -gt 0 ]]; then
 fi
 
 echo "Creating virtual environment called $name in $dir"
+
+mkdir -p "$dir"
+chmod -R 755 "$dir"
+
+
 python3 -m venv "$dir/$name"
 
 echo "Activating virtual environment"
 source "$dir/$name/bin/activate"
 
-if [ -f requirements.txt ]; then
+if [ -f /app/tiny-link/requirements.txt ]; then
   echo "Installing dependencies from requirements.txt"
-  pip install -r requirements.txt
+  pip install --no-cache-dir -r /app/tiny-link/requirements.txt
 else
   echo "No requirements.txt found, skipping dependency installation"
 fi

@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend/tiny-link
+    container_name: TinyLink_backend
+    working_dir: /app/tiny-link
+    env_file:
+      - ./db/.env
+    volumes:
+      - ./scripts:/app/scripts
+      - .db:/app/db
+      - ./backend/tiny-link:/app/tiny-link
+    stdin_open: true
+    tty: true
+    command: >
+      bash -c "chmod +x /app/scripts/setup.sh && /app/scripts/setup.sh"
+    networks:
+      - shared_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+networks:
+  shared_network:
+    driver: bridge

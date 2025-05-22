@@ -22,4 +22,11 @@ services:
     ports:
       - ${DATABASE_PORT}:3306
     restart: ${RESTART_POLICY}
- 
+    networks:
+      - shared_network
+  volumes:
+    tinylink:
+
+networks:
+  shared_network:
+    driver: bridge

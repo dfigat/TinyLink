@@ -74,3 +74,6 @@ fi
 
 issue_cert_standalone "${output}" "${domain}"
 authenticator_to_webroot "${output}" "${domain}"
+
+chmod 755 "${output}/etc/letsencrypt/archive"
+echo "Certificate issued successfully for $domain"
