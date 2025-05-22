@@ -1,13 +1,30 @@
-volumes:
-  tinylink:
- 
 services:
-  mariadb:
-    image: ${DATABASE_IMAGE_TAG}
-    container_name: ${DATABASE_CONTAINER_NAME}
-    command: '--default-authentication-plugin=mysql_native_password'
+  backend:
+    build: ./backend/tiny-link
+    container_name: TinyLink_backend
+    working_dir: /app/tiny-link
+    env_file:
+      - db/.env
     volumes:
-      - tinylink:/var/lib/mysql
+      - ./scripts:/app/scripts
+      - .db:/app/db
+      - ./backend/tiny-link:/app/tiny-link
+    stdin_open: true
+    tty: true
+    networks:
+      - shared_network
+    ports:
+      - 8080:8080
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  mariadb:
+    image: mariadb:latest
+    container_name: TinyLink_mariadb
+    command: '--default-authentication-plugin=mysql_native_password'
+    env_file:
+      - db/.env
     environment:
       MARIADB_DATABASE: ${DATABASE_NAME}
       MARIADB_USER: ${DATABASE_USER}
@@ -24,8 +41,6 @@ services:
     restart: ${RESTART_POLICY}
     networks:
       - shared_network
-  volumes:
-    tinylink:
 
 networks:
   shared_network:

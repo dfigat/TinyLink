@@ -1,0 +1,20 @@
+services:
+  nginx:
+    image: nginx
+    container_name: tiny-www
+    ports:
+      - "80:80"
+      - "443:443"
+    healthcheck:
+      test: ["CMD", "service", "nginx", "status"]
+    volumes:
+      - ${NGINX_CONFIG_PATH}:/etc/nginx/conf.d/default.conf:ro
+      - ${CERT_PATH}:/cert.pem:ro
+      - ${KEY_PATH}:/key.pem:ro
+      - ${WWW_HOME}:/www
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    driver: bridge
