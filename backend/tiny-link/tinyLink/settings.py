@@ -13,7 +13,7 @@ import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv('../db/.env')
+load_dotenv('../.env')
 
 from datetime import timedelta
 

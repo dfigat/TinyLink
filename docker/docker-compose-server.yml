@@ -1,0 +1,54 @@
+services:
+  backend:
+    build: 
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    container_name: tiny-backend
+    working_dir: /app/tiny-link
+      #command: ["bash"]
+    command: ["/start.sh"]
+      #python manage.py runserver_plus 0.0.0.0:8080
+      #--cert-file /cert.pem
+      #--key-file /key.pem
+    stdin_open: true
+    tty: true
+    volumes:
+      - ${CERT_PATH}:/cert.pem:ro
+      - ${KEY_PATH}:/key.pem:ro
+      - ./.env:/app/backend/tiny-link/.env:ro
+    networks:
+      - shared_network
+    ports:
+      - 8080:8080
+    depends_on:
+      mariadb:
+        condition: service_healthy
+  mariadb:
+    image: mariadb:latest
+    container_name: tiny-db
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - tinylink:/var/lib/mysql
+    environment:
+      MARIADB_DATABASE: ${DATABASE_NAME}
+      MARIADB_USER: ${DATABASE_USER}
+      MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    ports:
+      - ${DATABASE_PORT}:3306
+    restart: ${RESTART_POLICY}
+    networks:
+      - shared_network
+
+volumes:
+  tinylink:
+
+networks:
+  shared_network:
+    driver: bridge
