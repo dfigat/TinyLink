@@ -1,4 +1,4 @@
-domain = 'https://link.cbpio.pl:8080'
+domain = 'https://tiny-dev.cbpio.pl:8080'
 async function isAlive() {
     try {
         const response = await fetch(`${domain}/api/v1.0/is_alive`);

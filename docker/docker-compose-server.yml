@@ -1,16 +1,21 @@
 services:
   backend:
-    build: ./backend/tiny-link
-    container_name: TinyLink_backend
+    build: 
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    container_name: tiny-backend
     working_dir: /app/tiny-link
-    env_file:
-      - db/.env
-    volumes:
-      - ./scripts:/app/scripts
-      - .db:/app/db
-      - ./backend/tiny-link:/app/tiny-link
+      #command: ["bash"]
+    command: ["/start.sh"]
+      #python manage.py runserver_plus 0.0.0.0:8080
+      #--cert-file /cert.pem
+      #--key-file /key.pem
     stdin_open: true
     tty: true
+    volumes:
+      - ${CERT_PATH}:/cert.pem:ro
+      - ${KEY_PATH}:/key.pem:ro
+      - ./.env:/app/backend/tiny-link/.env:ro
     networks:
       - shared_network
     ports:
@@ -18,13 +23,12 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
-
   mariadb:
     image: mariadb:latest
-    container_name: TinyLink_mariadb
+    container_name: tiny-db
     command: '--default-authentication-plugin=mysql_native_password'
-    env_file:
-      - db/.env
+    volumes:
+      - tinylink:/var/lib/mysql
     environment:
       MARIADB_DATABASE: ${DATABASE_NAME}
       MARIADB_USER: ${DATABASE_USER}
@@ -41,6 +45,9 @@ services:
     restart: ${RESTART_POLICY}
     networks:
       - shared_network
+
+volumes:
+  tinylink:
 
 networks:
   shared_network:
