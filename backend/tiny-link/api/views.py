@@ -29,14 +29,14 @@ WEB_KEY = getenv('WEB_KEY')
 @api_view(['GET'])
 def api_default(request):
     return Response([
-        f"{API_URL}/{API_VERSION}"
+        f"{API_URL}{API_VERSION}"
     ])
 
 @api_view(['GET'])
 def api_v1_0(request):
     return Response([
-      f"{API_URL}/{API_VERSION}/short"
-      f"{API_URL}/{API_VERSION}/test"
+      f"{API_URL}{API_VERSION}/short",
+      f"{API_URL}{API_VERSION}/test"
     ])
 
 @api_view(['POST'])

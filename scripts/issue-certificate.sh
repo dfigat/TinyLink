@@ -55,22 +55,14 @@ done
 
 shift $((OPTIND - 1))
 
-ENV_PATH="$PWD/docker/.env"
-if [ -f "$ENV_PATH" ]; then
-	export $(grep -v '^#' "$ENV_PATH" | xargs)
-else
-	echo ".env file not found">&2
-	exit 1
-fi
-
-if [ -z "$ALLOWED_DOMAIN" ]; then
-  echo "DOMAIN is required in .env" >&2
+if [ -z "$domain" ]; then
+  echo "-d is required" >&2
   usage >&2
   exit 64
 fi
 
-if [ -z "$CERT_DIR" ]; then
-  echo "OUTPUT is required in .env" >&2
+if [ -z "$output" ]; then
+  echo "-o is required" >&2
   usage >&2
   exit 64
 fi
@@ -80,8 +72,5 @@ if ! which docker 1>/dev/null; then
   exit 64
 fi
 
-issue_cert_standalone "$(realpath "$CERT_DIR")" "${ALLOWED_DOMAIN}"
-authenticator_to_webroot "$(realpath "$CERT_DIR")" "${ALLOWED_DOMAIN}"
-
-chmod 755 "${CERT_DIR}/etc/letsencrypt/archive"
-echo "Certificate issued successfully for $ALLOWED_DOMAIN"
+issue_cert_standalone "${output}" "${domain}"
+authenticator_to_webroot "${output}" "${domain}"

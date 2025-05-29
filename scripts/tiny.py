@@ -2,6 +2,8 @@
 import requests
 import sys
 import json
+from getpass import getpass
+
 
 from dotenv import load_dotenv
 from os import getenv, path
@@ -10,7 +12,8 @@ from os import getenv, path
 file_dir = '/'.join(sys.argv[0].split('/')[:-1])
 
 load_dotenv(file_dir + '/' + '../db/.env')
-API_URL = getenv('API_URL')
+# API_URL = getenv('API_URL')
+API_URL= 'https://tiny.cbpio.pl:8080/api/'
 TOKEN_LOCATION = './tokens.json'
 COMMANDS = ['help', 'config', 'code', 'all', 'get_all_count', 'delete_old']
 
@@ -52,7 +55,7 @@ class API_Manager:
         print(' all                     - Prints all links')
         print(' get_all_count           - Gets count of all entries')
         print(' delete_old              - Deletes old (expired) entries')
-        print(' login <name> <password> - Self explanatory')
+        print(' login <name>            - self explanatory')
     
     def display_more_info_msg(self):
         print(f'Type `{filename} help` for more information')
@@ -122,8 +125,8 @@ class API_Manager:
                 tokens = json.load(token_file)
                 self.access_token = tokens.get('access')
                 self.refresh_token = tokens.get('refresh')
-        else:
-            self.display_error('Couldn\'t find tokens.\nRunning as guest')
+        # else:
+            # self.display_error('Couldn\'t find tokens.\nRunning as guest')
     
     def save_tokens(self):
         self.check_tokens()
@@ -142,7 +145,7 @@ class API_Manager:
         if res.status_code == 200:
             d = res.json()
             self.access_token = d['access']
-            print('Refresh of access_token successful')
+            # print('Refresh of access_token successful')
         else:
             self.display_error('Failed at refreshing access token. Make sure you are logged in')
             print(res.json()['detail'])
@@ -199,12 +202,13 @@ elif command == 'get_all_count':
 
 # For user
 elif command == 'login':
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 3:
         api_m.display_error('Inadequate argument count')
         api_m.display_more_info_msg()
         sys.exit(1)
     username = sys.argv[2]
-    password = sys.argv[3]
+    password = getpass(f'Password for {username}: ')
+    # password = sys.argv[3]
     api_m.login(username, password)
 
 else:

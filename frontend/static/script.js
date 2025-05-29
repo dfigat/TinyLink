@@ -18,4 +18,3 @@ linkBox.addEventListener('keydown', (event) => {
         playAnimation()
     }
 })
-
