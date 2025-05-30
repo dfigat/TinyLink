@@ -1,3 +1,5 @@
+const source = 'https://tiny.cbpio.pl:8080/api/v2.0/'
+
 function showError(error)
 {
     document.querySelector('#urlError').textContent = error
@@ -5,7 +7,7 @@ function showError(error)
 
 async function isAlive() {
     try {
-        const response = await fetch('https://tiny.cbpio.pl:8080/api/v1.0/is_alive');
+        const response = await fetch(`${source}is_alive`);
         return response.ok;
     } catch (error) {
         return false;
@@ -13,7 +15,7 @@ async function isAlive() {
 }
 
 async function login(username, password) {
-    const res = await fetch('https://tiny.cbpio.pl:8080/api/v1.0/get_tokens/', {
+    const res = await fetch(`${source}get_tokens/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username, password: password }),
@@ -34,7 +36,7 @@ async function login(username, password) {
 }
 
 async function refreshToken() {
-    const res = await fetch('https://tiny.cbpio.pl:8080/api/v1.0/refresh_token/', {
+    const res = await fetch(`${source}refresh_token/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -63,7 +65,7 @@ async function createTinyLink() {
             showError("Invalid link format: should be like: https://example.com")
         }
         showError()
-        const response = await fetch('https://tiny.cbpio.pl:8080/api/v1.0/short/', {
+        const response = await fetch(`${source}short/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

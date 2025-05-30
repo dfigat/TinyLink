@@ -29,14 +29,14 @@ WEB_KEY = getenv('WEB_KEY')
 @api_view(['GET'])
 def api_default(request):
     return Response([
-        f"{API_URL}{API_VERSION}"
+        f"{API_URL}v{API_VERSION}"
     ])
 
 @api_view(['GET'])
 def api_v1_0(request):
     return Response([
-      f"{API_URL}{API_VERSION}/short",
-      f"{API_URL}{API_VERSION}/test"
+      f"{API_URL}v{API_VERSION}/short",
+      f"{API_URL}v{API_VERSION}/test"
     ])
 
 @api_view(['POST'])
@@ -52,7 +52,7 @@ def create_tiny_link(request):
     #     return error
     
     if request.user.username == 'demouser':
-        if is_ratelimited(request, group='create_tiny_link', key='ip', rate='5/m', method='POST', increment=True):
+        if is_ratelimited(request, group='create_tiny_link', key='ip', rate='1000/m', method='POST', increment=True):
             return Response({'error': 'Rate limit exceeded'}, status.HTTP_429_TOO_MANY_REQUESTS)
     
     data = request.data

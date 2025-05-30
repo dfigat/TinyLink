@@ -11,9 +11,9 @@ from os import getenv, path
 
 file_dir = '/'.join(sys.argv[0].split('/')[:-1])
 
-load_dotenv(file_dir + '/' + '../db/.env')
-# API_URL = getenv('API_URL')
-API_URL= 'https://tiny.cbpio.pl:8080/api/'
+load_dotenv(file_dir + '/' + '../docker/.env')
+API_URL = getenv('API_URL')
+# API_URL= 'https://tiny.cbpio.pl:8080/api/'
 TOKEN_LOCATION = './tokens.json'
 COMMANDS = ['help', 'config', 'code', 'all', 'get_all_count', 'delete_old']
 
@@ -32,7 +32,7 @@ filename = sys.argv[0]
 
 
 class API_Manager:
-    def __init__(self, api_url=API_URL, api_version='v1.0'):
+    def __init__(self, api_url=API_URL, api_version='v2.0'):
         self.api_url = api_url
         self.api_version = api_version
         
@@ -95,7 +95,12 @@ class API_Manager:
     def print_data(self, res, property=''):
         data = res.json()
         if not res.ok:
-            print(res.content)
+            try:
+                data = res.json()
+                error = data.get('error') or data.get('detail')
+            except ValueError:
+                error = res.content
+            print(error)
             print('Failed at retrieving data')
             return
         if len(property) == 0:
@@ -148,7 +153,7 @@ class API_Manager:
             # print('Refresh of access_token successful')
         else:
             self.display_error('Failed at refreshing access token. Make sure you are logged in')
-            print(res.json()['detail'])
+            # print(res.json())
     
     def login(self, username, password):
         res = requests.post(f'{self.api_url}{self.api_version}/get_tokens/',

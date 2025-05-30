@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Link
 from .config import *
 from dotenv import load_dotenv
+from django.test import override_settings
 import os
 import datetime
 load_dotenv('../db/.env')
@@ -30,7 +31,7 @@ class TestLinkModel(TestCase):
                 long_link = "https://www.example.com",
                 code="Ex4m"
             )
-
+@override_settings(SECURE_SSL_REDIRECT=False)
 class TestAPIGETRequests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -46,11 +47,13 @@ class TestAPIGETRequests(TestCase):
     """ Testuje czy odpowiedź servera na zapytanie działa"""
     def test_api_default_response(self):
         response = self.client.get(f'/api/', follow=False)
-        self.assertTrue(response.data[0].startswith(f"{URL}v{API_VERSION}/"))
+        print('f1',response.data)
+        self.assertTrue(response.data[0].startswith(f"{URL}v{API_VERSION}"))
 
     """ Testuje czy server poprawnie odpowiada na zapytanie"""
     def test_api_version_links(self):
-        response = self.client.get(f'/api/v{API_VERSION}', follow=True)
+        response = self.client.get(f'/api/v{API_VERSION}', follow=True, headers={'Authorization':'Bearer {self.access_token}'})
+        print('f2',response.data)
         self.assertIn(f"{URL}v{API_VERSION}/short",response.content.decode('utf-8'))#, f"Expected http://link.cbpio.pl:8080/api/v{API_VERSION}/short to be in response, expected not in response data")
         self.assertIn(f"{URL}v{API_VERSION}/test",response.content.decode('utf-8'))#, f"Expected http://link.cbpio.pl:8080/api/v{API_VERSION}/test to be in response, expected not in response data")
     
@@ -79,7 +82,7 @@ class TestAPIGETRequests(TestCase):
     def test_api_shows_code(self):
         response = self.client.get(f"/api/v{API_VERSION}/code/{self.link.long_link}",follow=True)
         self.assertEqual(response.data, self.link.code)
-
+@override_settings(SECURE_SSL_REDIRECT=False)
 class TestAPIDELETERequests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -98,10 +101,12 @@ class TestAPIDELETERequests(TestCase):
         self.client.delete(f"/api/v{API_VERSION}/short/delete_old")
         postDelete = Link.objects.all()
         self.assertNotEqual(preDelete,postDelete)
-
+@override_settings(SECURE_SSL_REDIRECT=False)
 class TestAPIPOSTRequest(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.user.username = 'demouser'
+        self.user.password = 'demodemo'
         self.link = Link.objects.create(
            long_link="https://www.example.com",
             code = "Ex4m" 
@@ -110,17 +115,20 @@ class TestAPIPOSTRequest(TestCase):
     """ Testuje czy poprawnie jest tworzony link przez zapytanie """
     def test_api_create_new_link(self):
         data = {'long_link':"https://www.example3.com"}
-        response = self.client.post(self.url, data, follow=True)
+        response = self.client.post(self.url, data, follow=True headers={'Authorization':'Bearer {self.access_token}'})
+        print('f3',response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn(f"{URL_SHORT}",response.data["code"])
     """ Testuje czy zwracany jest już istniejący link gdy tworzony jest juz w bazie"""
     def test_api_return_existing_link(self):
         data = {'long_link': "https://www.example.com"}
-        response = self.client.post(self.url,data, follow=True)
+        response = self.client.post(self.url,data, follow=Trueheaders={'Authorization':'Bearer {self.access_token}'})
+        print('f4',response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
     """ Testuje czy server poprawnie radzi sobie z złym zapytaniem"""
     def test_api_invalid_data(self):
         data = {'long_link':""}
         response = self.client.post(self.url, data, follow=True)
+        print('f5',response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("long_link",response.data)
