@@ -1,14 +1,21 @@
 from django.urls import path
 
 from . import views
+from .config import API_VERSION
+
 
 urlpatterns = [
     path('', views.api_default),
-    path('v1.0/', views.api_v1_0),
-    path('v1.0/short/', views.create_tiny_link),
-    path('v1.0/short/<str:code>/', views.redirect_by_short_code),
-    path('v1.0/all',views.show_all_records),
-    path('v1.0/config',views.show_configuration),
-    path('v1.0/code/<path:long_link>/', views.show_code),
-    path('v1.0/short/delete_old', views.delete_all_by_threshold),
+    path(f'v{API_VERSION}/', views.api_v1_0),
+    path(f'v{API_VERSION}/short/', views.create_tiny_link),
+    path(f'v{API_VERSION}/short/<str:code>/', views.redirect_by_short_code),
+    path(f'v{API_VERSION}/all',views.show_all_records),
+    path(f'v{API_VERSION}/get_count_all', views.count_all_records),
+    path(f'v{API_VERSION}/config',views.show_configuration),
+    path(f'v{API_VERSION}/code/<path:long_link>/', views.show_code),
+    path(f'v{API_VERSION}/short/delete_old', views.delete_all_by_threshold),
+    path(f'v{API_VERSION}/short/delete_by_code/<str:code>/', views.delete_by_code),
+    path(f'v{API_VERSION}/is_alive', views.is_alive),
+    path(f'v{API_VERSION}/get_tokens/', views.get_tokens),
+    path(f'v{API_VERSION}/refresh_token/', views.refresh_token)
 ]

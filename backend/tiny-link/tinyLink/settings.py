@@ -13,7 +13,9 @@ import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv('../.env')
+
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,11 +28,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True 
 
 ALLOWED_HOSTS = [
-    'link.cbpio.pl',
-    'https://link.cbpio.pl',
+    os.getenv('ALLOWED_HOST'),
+    os.getenv('ALLOWED_DOMAIN'),
 ]
 
 
@@ -45,13 +47,28 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'django_extensions',
     'corsheaders'
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    'AUTH_HEADER_TYPES': ('Bearer', 'Token'),
+}
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True;
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 MIDDLEWARE = [
@@ -71,7 +88,7 @@ CORS_ALLOW_CREDENTIALS = True
 # CORS_ORIGIN_ALLOW_ALL = True 
   
 CORS_ALLOWED_ORIGINS = [
-    "https://link.cbpio.pl"
+    os.getenv('ALLOWED_HOST')
 ]
 
 # Not sure if needed, just in case
@@ -86,12 +103,14 @@ CORS_ALLOW_HEADERS = [
     "authorization",
     "x-csrftoken",
     "x-requested-with",
+    "x-api-key",
 ]
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '../../frontend')], # for now
+        # 'DIRS': [os.path.join(BASE_DIR, '../../frontend')], # for now
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,14 +138,14 @@ DATABASES = {
         'HOST' : os.getenv('DATABASE_HOST'),
         'PORT' : os.getenv("DATABASE_PORT"),
         },
-        'TEST': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('TEST_DATABASE_NAME'),
-            'USER': os.getenv('TEST_DATABASE_USER'),
-            'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
-            'HOST' : os.getenv('TEST_DATABASE_HOST'),
-            'PORT' : os.getenv("TEST_DATABASE_PORT")
-        }
+    'TEST': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('TEST_DATABASE_NAME'),
+        'USER': os.getenv('TEST_DATABASE_USER'),
+        'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
+        'HOST' : os.getenv('TEST_DATABASE_HOST'),
+        'PORT' : os.getenv("TEST_DATABASE_PORT")
+    }
 }
 if 'test' in sys.argv:
     DATABASES['default'] = DATABASES['TEST']
@@ -157,10 +176,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Warsaw'
 USE_TZ = True
-
 USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -168,9 +184,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / '../../frontend/static'
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / '../../frontend/static'
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
